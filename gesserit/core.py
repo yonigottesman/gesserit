@@ -1,3 +1,4 @@
+import asyncio
 import importlib.resources as resources
 import inspect
 import json
@@ -77,7 +78,10 @@ async def search(
     query_param: str = Form(...),
 ) -> HTMLResponse:
     query_data = json.loads(query_param)
-    search_results = search_function(**query_data)
+    if asyncio.iscoroutinefunction(search_function):
+        search_results = await search_function(**query_data)
+    else:
+        search_results = search_function(**query_data)
     return templates.TemplateResponse(
         "index.html",
         {

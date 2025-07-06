@@ -257,8 +257,8 @@ wheels = [
 
 [[package]]
 name = "gesserit"
-version = "0.2.0"
-source = { virtual = "." }
+version = "0.2.4"
+source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
     { name = "jinja2" },
@@ -278,10 +278,10 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "fastapi", specifier = ">=0.115.14" },
+    { name = "fastapi", specifier = ">=0.109" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "python-multipart", specifier = ">=0.0.20" },
-    { name = "uvicorn", specifier = ">=0.35.0" },
+    { name = "uvicorn", specifier = ">=0.22" },
 ]
 
 [package.metadata.requires-dev]
