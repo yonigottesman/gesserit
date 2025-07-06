@@ -1,3 +1,3 @@
-from .core import Gesserit
+from .core import Gesserit, SearchItem
 
-__all__ = ["Gesserit"]
+__all__ = ["Gesserit", "SearchItem"]
