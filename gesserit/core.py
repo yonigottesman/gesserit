@@ -34,7 +34,7 @@ class Gesserit:
     ):
         self.app = FastAPI()
         templates.env.globals["url_for"] = self.app.url_path_for
-        self.app.mount("/static", StaticFiles(directory="gesserit/static"), name="static")
+        self.app.mount("/static", StaticFiles(directory=str(resources.files(__package__) / "static")), name="static")
 
         self.search_function = search_function
         self.parameters = self._inspect_handler_parameters()
