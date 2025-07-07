@@ -3,11 +3,12 @@ import importlib.resources as resources
 import inspect
 import json
 from functools import partial
-from typing import Any, Callable
+from typing import Any, Callable, Coroutine, Optional, Union
 
 import uvicorn
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
@@ -16,7 +17,7 @@ templates = Jinja2Templates(directory=str(resources.files(__package__) / "templa
 
 class SearchItem(BaseModel):
     text: str
-    metadata: dict[str, Any]
+    metadata: Optional[dict[str, Any]] = None
 
 
 class ParameterInfo(BaseModel):
@@ -26,10 +27,15 @@ class ParameterInfo(BaseModel):
 
 
 class Gesserit:
-    def __init__(self, handler: Callable):
+    def __init__(
+        self,
+        search_function: Union[Callable[..., list[SearchItem]], Callable[..., Coroutine[Any, Any, list[SearchItem]]]],
+    ):
         self.app = FastAPI()
         templates.env.globals["url_for"] = self.app.url_path_for
-        self.handler = handler
+        self.app.mount("/static", StaticFiles(directory="gesserit/static"), name="static")
+
+        self.search_function = search_function
         self.parameters = self._inspect_handler_parameters()
 
         self.app.add_api_route(
@@ -37,7 +43,7 @@ class Gesserit:
         )
         self.app.add_api_route(
             "/search",
-            partial(search, search_function=self.handler, parameters=self.parameters),
+            partial(search, search_function=self.search_function, parameters=self.parameters),
             response_class=HTMLResponse,
             methods=["POST"],
             name="search",
@@ -45,7 +51,7 @@ class Gesserit:
 
     def _inspect_handler_parameters(self) -> list[ParameterInfo]:
         """Inspect the handler function to extract parameter information."""
-        sig = inspect.signature(self.handler)
+        sig = inspect.signature(self.search_function)
         parameters = []
 
         for param_name, param in sig.parameters.items():
@@ -57,6 +63,11 @@ class Gesserit:
         return parameters
 
     def run(self, **kwargs):
+        """Run the Gesserit server.
+
+        Args:
+            **kwargs: Additional arguments to pass to the uvicorn.run function.
+        """
         uvicorn.run(self.app, **kwargs)
 
 
@@ -73,7 +84,7 @@ async def root(request: Request, parameters: list[ParameterInfo]) -> HTMLRespons
 
 async def search(
     request: Request,
-    search_function: Callable[..., list[SearchItem]],
+    search_function: Union[Callable[..., list[SearchItem]], Callable[..., Coroutine[Any, Any, list[SearchItem]]]],
     parameters: list[ParameterInfo],
     query_param: str = Form(...),
 ) -> HTMLResponse:

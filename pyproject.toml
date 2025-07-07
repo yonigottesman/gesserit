@@ -1,6 +1,6 @@
 [project]
 name = "gesserit"
-version = "0.2.4"
+version = "0.2.5"
 description = "Inspect retrieval results"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -14,11 +14,8 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipykernel>=6.29.5",
-    "lancedb>=0.24.0",
     "mypy>=1.16.1",
-    "pylance>=0.31.0",
     "ruff>=0.12.2",
-    "tantivy>=0.24.0",
 ]
 
 
