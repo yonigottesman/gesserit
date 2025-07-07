@@ -1,6 +1,6 @@
 [project]
 name = "gesserit"
-version = "0.2.8"
+version = "0.2.9"
 description = "Inspect retrieval results"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -10,7 +10,9 @@ dependencies = [
     "python-multipart>=0.0.20",
     "uvicorn>=0.22",
 ]
-
+authors = [
+    { name="Yoni Gottesman", email="yonigo10@gmail.com" }
+]
 [dependency-groups]
 dev = [
     "ipykernel>=6.29.5",
@@ -27,3 +29,6 @@ build-backend = "uv_build"
 module-name = "gesserit"
 module-root = ""
 source-include = ["gesserit/templates/**", "gesserit/static/**"]
+
+[project.urls]
+Repository = "https://github.com/yonigottesman/gesserit"
