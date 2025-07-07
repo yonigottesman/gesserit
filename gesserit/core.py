@@ -24,6 +24,7 @@ class ParameterInfo(BaseModel):
     name: str
     type: type
     default: Any = None
+    required: bool = False
 
 
 class Gesserit:
@@ -58,8 +59,10 @@ class Gesserit:
             param_type = param.annotation if param.annotation != inspect.Parameter.empty else str
             if param_type not in (str, bool, float, int):
                 param_type = str
-            default = param.default if param.default != inspect.Parameter.empty else None
-            parameters.append(ParameterInfo(name=param_name, type=param_type, default=default))
+            has_default = param.default != inspect.Parameter.empty
+            default = param.default if has_default else None
+            required = not has_default
+            parameters.append(ParameterInfo(name=param_name, type=param_type, default=default, required=required))
         return parameters
 
     def run(self, **kwargs):
