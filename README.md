@@ -38,4 +38,8 @@ app.run()  # Accepts any uvicorn parameters
 ```
 
 ## BEIR example
-Run `uv run example.py` to see a simple example using `gesserit` to inspect retrieval results. This example demonstrates text search on the NFCorpus dataset using LanceDB full-text search.
+Run `uv run examples/beir_nfcorpus.py` to see a simple example using `gesserit` to inspect retrieval results. This example demonstrates text search on the NFCorpus dataset using LanceDB full-text search.  
+UI looks like this:
+
+![BEIR example](examples/beir_nfcorpus.png)
+
