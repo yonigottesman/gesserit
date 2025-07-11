@@ -1,12 +1,13 @@
 [project]
 name = "gesserit"
-version = "0.2.9"
+version = "0.3.0"
 description = "Inspect retrieval results"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "fastapi>=0.109",
     "jinja2>=3.1.6",
+    "pillow>=11.3.0",
     "python-multipart>=0.0.20",
     "uvicorn>=0.22",
 ]
@@ -16,6 +17,7 @@ authors = [
 [dependency-groups]
 dev = [
     "ipykernel>=6.29.5",
+    "ipywidgets>=8.1.7",
     "mypy>=1.16.1",
     "ruff>=0.12.2",
 ]

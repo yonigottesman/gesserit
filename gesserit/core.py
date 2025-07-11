@@ -1,6 +1,8 @@
 import asyncio
+import base64
 import importlib.resources as resources
 import inspect
+import io
 import json
 from functools import partial
 from typing import Any, Callable, Coroutine, Optional, Union
@@ -10,13 +12,15 @@ from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from PIL import Image
 from pydantic import BaseModel
 
 templates = Jinja2Templates(directory=str(resources.files(__package__) / "templates"))
 
 
 class SearchItem(BaseModel):
-    text: str
+    text: Optional[str] = None
+    image: Optional[Image] = None
     metadata: Optional[dict[str, Any]] = None
 
 
@@ -85,6 +89,14 @@ async def root(request: Request, parameters: list[ParameterInfo]) -> HTMLRespons
     )
 
 
+def encode_images(search_results: list[SearchItem]):
+    for result in search_results:
+        if result.image:
+            data = io.BytesIO()
+            result.image.save(data, "JPEG")
+            result.image = base64.b64encode(data.getvalue()).decode("utf-8")
+
+
 async def search(
     request: Request,
     search_function: Union[Callable[..., list[SearchItem]], Callable[..., Coroutine[Any, Any, list[SearchItem]]]],
@@ -96,6 +108,7 @@ async def search(
         search_results = await search_function(**query_data)
     else:
         search_results = search_function(**query_data)
+    encode_images(search_results)
     return templates.TemplateResponse(
         "index.html",
         {
