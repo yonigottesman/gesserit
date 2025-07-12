@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = [
 #     "datasets",
-#     "gesserit==0.3.0",
+#     "gesserit",
 #     "numpy",
 #     "transformers[torch]",
 # ]
