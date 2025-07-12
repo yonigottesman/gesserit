@@ -13,14 +13,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from PIL import Image
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 templates = Jinja2Templates(directory=str(resources.files(__package__) / "templates"))
 
 
 class SearchItem(BaseModel):
     text: Optional[str] = None
-    image: Optional[Image] = None
+    image_bytes: Optional[Union[bytes, str]] = Field(None, description="The image file bytes or base64 encoded string")
     metadata: Optional[dict[str, Any]] = None
 
 
@@ -91,10 +91,11 @@ async def root(request: Request, parameters: list[ParameterInfo]) -> HTMLRespons
 
 def encode_images(search_results: list[SearchItem]):
     for result in search_results:
-        if result.image:
+        if result.image_bytes and isinstance(result.image_bytes, bytes):
+            image = Image.open(io.BytesIO(result.image_bytes))
             data = io.BytesIO()
-            result.image.save(data, "JPEG")
-            result.image = base64.b64encode(data.getvalue()).decode("utf-8")
+            image.save(data, "JPEG")
+            result.image_bytes = base64.b64encode(data.getvalue()).decode("utf-8")
 
 
 async def search(

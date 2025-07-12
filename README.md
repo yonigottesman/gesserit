@@ -43,3 +43,8 @@ UI looks like this:
 
 ![BEIR example](examples/beir_nfcorpus.png)
 
+## Image Search Example
+Run `uv run examples/clip.py` to see a simple example using `gesserit` to inspect image search results. This example demonstrates image search on the Mini-ImageNet dataset using CLIP.
+UI looks like this:
+
+![Image Search Example](examples/clip.png)
